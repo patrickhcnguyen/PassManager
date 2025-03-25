@@ -1,20 +1,21 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useRegisterUser } from '../../Hooks/fetchUser/fetchUser';
 
 const Register = () => {
-  const [formData, setFormData] = useState({
-    email: '',
-    username: '',
-    master_password: ''  
-  });
-
   const registerMutation = useRegisterUser();
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const form = e.currentTarget;
+    const formData = new FormData(form);
+    
     try {
-      await registerMutation.mutateAsync(formData);
-      console.log('Registration successful!');
+      await registerMutation.mutateAsync({
+        email: formData.get('email') as string,
+        username: formData.get('username') as string,
+        master_password: formData.get('master_password') as string
+      });
+      form.reset();
     } catch (error) {
       console.error('Registration failed:', error);
     }
@@ -25,23 +26,20 @@ const Register = () => {
       <form onSubmit={handleSubmit} className="space-y-4">
         <input
           type="text"
+          name="username"
           placeholder="Username"
-          value={formData.username}
-          onChange={e => setFormData({...formData, username: e.target.value})}
           className="block w-full p-2 border rounded"
         />
         <input
           type="email"
+          name="email"
           placeholder="Email"
-          value={formData.email}
-          onChange={e => setFormData({...formData, email: e.target.value})}
           className="block w-full p-2 border rounded"
         />
         <input
           type="password"
+          name="master_password"
           placeholder="Master Password"
-          value={formData.master_password}
-          onChange={e => setFormData({...formData, master_password: e.target.value})}
           className="block w-full p-2 border rounded"
         />
         <button 
