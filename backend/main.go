@@ -7,6 +7,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/patrickhcnguyen/PassManager/backend/database"
+	"github.com/patrickhcnguyen/PassManager/backend/routes/userAuth"
 )
 
 func main() {
@@ -17,11 +18,27 @@ func main() {
 	}
 
 	router := gin.Default()
+
+	// cors
+	router.Use(func(c *gin.Context) {
+		c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
+		c.Writer.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+		c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+
+		if c.Request.Method == "OPTIONS" {
+			c.AbortWithStatus(204)
+			return
+		}
+
+		c.Next()
+	})
+
 	api := router.Group("/api")
 	{
 		api.GET("/hello", func(ctx *gin.Context) {
 			ctx.JSON(200, gin.H{"msg": "hello world"})
 		})
+		api.POST("/register", userAuth.Register)
 	}
 	router.NoRoute(func(ctx *gin.Context) { ctx.JSON(http.StatusNotFound, gin.H{}) })
 	router.Run(":8080")
