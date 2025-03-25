@@ -3,9 +3,9 @@ import { useRegisterUser } from '../../Hooks/fetchUser/fetchUser';
 
 const Register = () => {
   const [formData, setFormData] = useState({
-    Email: '',
-    Username: '',
-    MasterPassword: ''  
+    email: '',
+    username: '',
+    master_password: ''  
   });
 
   const registerMutation = useRegisterUser();
@@ -26,22 +26,22 @@ const Register = () => {
         <input
           type="text"
           placeholder="Username"
-          value={formData.Username}
-          onChange={e => setFormData({...formData, Username: e.target.value})}
+          value={formData.username}
+          onChange={e => setFormData({...formData, username: e.target.value})}
           className="block w-full p-2 border rounded"
         />
         <input
           type="email"
           placeholder="Email"
-          value={formData.Email}
-          onChange={e => setFormData({...formData, Email: e.target.value})}
+          value={formData.email}
+          onChange={e => setFormData({...formData, email: e.target.value})}
           className="block w-full p-2 border rounded"
         />
         <input
           type="password"
           placeholder="Master Password"
-          value={formData.MasterPassword}
-          onChange={e => setFormData({...formData, MasterPassword: e.target.value})}
+          value={formData.master_password}
+          onChange={e => setFormData({...formData, master_password: e.target.value})}
           className="block w-full p-2 border rounded"
         />
         <button 

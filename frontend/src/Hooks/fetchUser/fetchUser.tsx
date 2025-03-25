@@ -3,15 +3,15 @@ import {
 } from '@tanstack/react-query';
 
 
-interface User {
-    Email: string;
-    Username: string;
-    MasterPassword: string;
+interface UserData {
+    email: string;
+    username: string;
+    master_password: string;
 }
 
 export const useRegisterUser = () => {
     return useMutation({
-        mutationFn: async (userData: User) => {
+        mutationFn: async (userData: UserData) => {
             const response = await fetch('http://localhost:8080/api/register', {
                 method: 'POST',
                 headers: {
