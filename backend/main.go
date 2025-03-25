@@ -2,12 +2,20 @@ package main
 
 // this is our main server, and is where we use all our routes similar to an index.js on a node server
 import (
+	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/patrickhcnguyen/PassManager/backend/database"
 )
 
 func main() {
+	// initialize database
+	_, err := database.Initialize()
+	if err != nil {
+		log.Fatal("Failed to connect to database:", err)
+	}
+
 	router := gin.Default()
 	api := router.Group("/api")
 	{
