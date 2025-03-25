@@ -19,7 +19,7 @@ func main() {
 
 	router := gin.Default()
 
-	// cors
+	// cors, probably want to move to middleware directory
 	router.Use(func(c *gin.Context) {
 		c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
 		c.Writer.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
