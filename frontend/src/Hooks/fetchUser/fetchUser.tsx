@@ -38,29 +38,31 @@ export const useRegisterUser = () => {
 export const useLoginUser = () => {
     return useMutation({
         mutationFn: async (userData: LoginData) => {
-            const response = await fetch('http://localhost:8080/api/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(userData)
-            })
+            try {
+                const response = await fetch('http://localhost:8080/api/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify(userData)
+                });
 
-            if (!response.ok) {
-                const error = await response.json();
-                throw new Error(error.error);
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    console.log('Login response:', response.status, data);
+                    throw new Error(data.error || 'Login failed');
+                }
+
+                return data;
+            } catch (error) {
+                console.error('Login error:', error);
+                throw error;
             }
-
-            if (response.ok) {
-                console.log('login successful');
-            }
-            const data = await response.json();
-            console.log(data);
-
-            return data;
         }
-    })
-}
+    });
+};
 
 // export const useAuthenticatedQuery = () => {
 //     const getAuthHeader = () => ({
