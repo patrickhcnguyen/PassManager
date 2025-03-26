@@ -21,20 +21,27 @@ func Login(c *gin.Context) { // checking user credentials and generating jwt tok
 	}
 
 	if err := c.ShouldBindJSON(&input); err != nil {
+		log.Printf("Failed to bind JSON: %v", err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+
+	log.Printf("Login attempt with: %s", input.Login)
 
 	user := models.User{}
 	result := database.DB.Where("email = ?", input.Login).First(&user)
 
 	if result.Error != nil {
+		log.Printf("Email not found, trying username")
 		result = database.DB.Where("username = ?", input.Login).First(&user)
 		if result.Error != nil {
+			log.Printf("User not found with login: %s", input.Login)
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid credentials"})
 			return
 		}
 	}
+
+	log.Printf("Found user: %s", user.Username)
 
 	// compare passwords
 	err := bcrypt.CompareHashAndPassword([]byte(user.MasterPassword), []byte(input.MasterPassword))
@@ -57,6 +64,10 @@ func Login(c *gin.Context) { // checking user credentials and generating jwt tok
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to generate token"})
 		return
 	}
+
+	// set jwt token in cookies
+	c.SetCookie("jwt", tokenString, 3600, "/", "localhost", false, true)
+	c.SetSameSite(http.SameSiteStrictMode)
 
 	c.JSON(http.StatusOK, gin.H{"token": tokenString})
 
