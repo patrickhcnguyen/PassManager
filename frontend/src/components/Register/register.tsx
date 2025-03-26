@@ -2,24 +2,26 @@ import React from 'react';
 import { useRegisterUser } from '../../Hooks/fetchUser/fetchUser';
 
 const Register = () => {
-  const registerMutation = useRegisterUser();
+    const registerMutation = useRegisterUser();
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const form = e.currentTarget;
-    const formData = new FormData(form);
-    
-    try {
-      await registerMutation.mutateAsync({
-        email: formData.get('email') as string,
-        username: formData.get('username') as string,
-        master_password: formData.get('master_password') as string
-      });
-      form.reset();
-    } catch (error) {
-      console.error('Registration failed:', error);
-    }
-  };
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        const form = e.currentTarget;
+        const formData = new FormData(form);
+        
+        try {
+            await registerMutation.mutateAsync({
+                email: formData.get('email') as string,
+                username: formData.get('username') as string,
+                master_password: formData.get('master_password') as string
+
+            });
+            alert('Successfully registered');
+            form.reset();
+            } catch (error) {
+            console.error('Registration failed:', error);
+        }
+    };
 
   return (
     <div className="min-h-screen flex items-center justify-center">
