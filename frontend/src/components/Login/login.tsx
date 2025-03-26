@@ -10,14 +10,15 @@ const Login = () => {
         const formData = new FormData(form);
         
         try {
-                await loginMutation.mutateAsync({
+            const result = await loginMutation.mutateAsync({
                 login: formData.get('login') as string,
                 master_password: formData.get('master_password') as string
             });
             
-            alert('Successfully logged in');
-            form.reset();
-            
+            if (result.token) {
+                alert('Successfully logged in');
+                form.reset();
+            }
         } catch (error) {
             console.error('Login failed:', error);
             alert('Login failed. Please check your credentials.');
