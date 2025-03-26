@@ -3,6 +3,7 @@
 package userAuth
 
 import (
+	"log"
 	"net/http"
 	"time"
 
@@ -28,13 +29,17 @@ func Login(c *gin.Context) { // checking user credentials and generating jwt tok
 	result := database.DB.Where("email = ?", input.Login).First(&user)
 
 	if result.Error != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid credentials"})
-		return
+		result = database.DB.Where("username = ?", input.Login).First(&user)
+		if result.Error != nil {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid credentials"})
+			return
+		}
 	}
-	// unhash master password and compare with input
-	password := user.MasterPassword
 
-	if err := bcrypt.CompareHashAndPassword([]byte(password), []byte(input.MasterPassword)); err != nil {
+	// compare passwords
+	err := bcrypt.CompareHashAndPassword([]byte(user.MasterPassword), []byte(input.MasterPassword))
+	if err != nil {
+		log.Printf("Password comparison failed: %v", err)
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid credentials"})
 		return
 	}
@@ -54,5 +59,6 @@ func Login(c *gin.Context) { // checking user credentials and generating jwt tok
 	}
 
 	c.JSON(http.StatusOK, gin.H{"token": tokenString})
+
 	// send to middleware to check if token is valid
 }
