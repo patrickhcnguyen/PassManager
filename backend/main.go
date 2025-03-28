@@ -8,6 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/patrickhcnguyen/PassManager/backend/database"
 	"github.com/patrickhcnguyen/PassManager/backend/middleware/auth"
+	"github.com/patrickhcnguyen/PassManager/backend/routes/passwordManagement"
 	"github.com/patrickhcnguyen/PassManager/backend/routes/userAuth"
 )
 
@@ -49,6 +50,8 @@ func main() {
 				ctx.JSON(200, gin.H{"msg": "hello world"})
 			})
 			protected.GET("/user", auth.UserHandler)
+			protected.POST("/passwords/create", passwordManagement.CreateNewPassword)
+			protected.GET("/passwords", passwordManagement.GetPasswords)
 		}
 	}
 	router.NoRoute(func(ctx *gin.Context) { ctx.JSON(http.StatusNotFound, gin.H{}) })
