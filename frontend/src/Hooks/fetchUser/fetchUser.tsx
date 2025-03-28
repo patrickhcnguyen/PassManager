@@ -1,5 +1,6 @@
 import {
     useMutation,
+    useQuery,
 } from '@tanstack/react-query';
 
 
@@ -14,6 +15,7 @@ interface LoginData {
     master_password: string;
 }
 
+// register user
 export const useRegisterUser = () => {
     return useMutation({
         mutationFn: async (userData: RegisterData) => {
@@ -35,6 +37,7 @@ export const useRegisterUser = () => {
     });
 };
 
+// login user
 export const useLoginUser = () => {
     return useMutation({
         mutationFn: async (userData: LoginData) => {
@@ -64,12 +67,27 @@ export const useLoginUser = () => {
     });
 };
 
-// export const useAuthenticatedQuery = () => {
-//     const getAuthHeader = () => ({
-//         'Authorization': `Bearer ${localStorage.getItem('token')}`,
-//         'Content-Type': 'application/json'
-//     });
-    
-//     return { getAuthHeader };
-// };
-
+// fetch user data
+export const useFetchUser = () => {
+    return useQuery({
+        queryKey: ['user'],
+        queryFn: async () => {
+            const response = await fetch('http://localhost:8080/api/user', {
+                method: 'GET',
+                credentials: 'include',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                }
+            });
+            
+            if (!response.ok) {
+                throw new Error('Failed to fetch user data');
+            }
+            
+            return response.json();
+        },
+        retry: false,
+        staleTime: Infinity,
+    });
+};
