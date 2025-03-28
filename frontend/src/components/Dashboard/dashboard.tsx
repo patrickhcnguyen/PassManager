@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useFetchUser } from '../../Hooks/fetchUser/fetchUser';
 import { useCreatePassword, useFetchPasswords } from '../../Hooks/usePasswords/usePasswords';
+// show unencrypted password
 
 const Dashboard = () => {
     const { data: userData } = useFetchUser();
@@ -84,20 +85,20 @@ const Dashboard = () => {
                     <h2 className="text-xl font-semibold mb-4">Saved Passwords</h2>
                     <div className="space-y-4">
                         {passwords?.map((entry: any) => (
-                            <div key={entry.id} className="border p-4 rounded">
-                                <p className="font-semibold">{entry.site_name}</p>
-                                <p>Username: {entry.site_username}</p>
+                            <div key={entry.ID} className="border p-4 rounded">
+                                <p className="font-semibold">{entry.SiteName}</p>
+                                <p>Username: {entry.SiteUsername}</p>
                                 <div className="flex items-center gap-2">
                                     <p>
-                                        Password: {showPassword[entry.id] 
-                                            ? entry.encrypted_password 
+                                        Password: {showPassword[entry.ID] 
+                                            ? entry.EncryptedPassword 
                                             : '••••••••'}
                                     </p>
                                     <button
-                                        onClick={() => togglePasswordVisibility(entry.id)}
+                                        onClick={() => togglePasswordVisibility(entry.ID)}
                                         className="text-sm text-blue-500 hover:text-blue-700"
                                     >
-                                        {showPassword[entry.id] ? 'Hide' : 'Show'}
+                                        {showPassword[entry.ID] ? 'Hide' : 'Show'}
                                     </button>
                                 </div>
                             </div>
