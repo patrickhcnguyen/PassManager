@@ -24,7 +24,7 @@ func main() {
 	router.Use(func(c *gin.Context) {
 		c.Writer.Header().Set("Access-Control-Allow-Origin", "http://localhost:5173")
 		c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
-		c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+		c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization, Cookie")
 		c.Writer.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
 
 		if c.Request.Method == "OPTIONS" {
@@ -48,6 +48,7 @@ func main() {
 			protected.GET("/hello", func(ctx *gin.Context) {
 				ctx.JSON(200, gin.H{"msg": "hello world"})
 			})
+			protected.GET("/user", auth.UserHandler)
 		}
 	}
 	router.NoRoute(func(ctx *gin.Context) { ctx.JSON(http.StatusNotFound, gin.H{}) })
