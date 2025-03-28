@@ -1,8 +1,10 @@
 import React from 'react';
 import { useLoginUser } from '../../Hooks/fetchUser/fetchUser';
+import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
     const loginMutation = useLoginUser();
+    const navigate = useNavigate();
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -18,9 +20,9 @@ const Login = () => {
             if (result.token) {
                 alert('Successfully logged in');
                 form.reset();
+                navigate('/dashboard');
             }
         } catch (error) {
-            console.error('Login failed:', error);
             alert('Login failed. Please check your credentials.');
         }
     }
