@@ -1,0 +1,1 @@
+idea rn is to have page get webscraped and look for input field labeled as password
