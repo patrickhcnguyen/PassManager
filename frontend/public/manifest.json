@@ -1,0 +1,22 @@
+{
+    "manifest_version": 3,
+    "version": "1.0",
+    "name": "Password Manager",
+    "description": "A password manager extension written in Go and Vite",
+    "icons": {
+        "16": "icons/lock.png",
+        "32": "icons/lock.png",
+        "48": "icons/lock.png",
+        "128": "icons/lock.png"
+    },
+    "action": {
+        "default_popup": "popup.html"
+    },
+    "permissions": [
+        "scripting"
+    ],
+    "host_permissions": [
+        "https://*/*",
+        "http://*/*"
+    ]
+}
