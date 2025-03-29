@@ -13,7 +13,15 @@ function Popup() {
     }
 
     return (
-        <button onClick={onclick}>Click me</button>
+        <div className="w-[300px] h-[400px] p-4 bg-white">
+            <h1 className="text-lg font-bold mb-4">Password Manager</h1>
+            <button 
+                onClick={onclick}
+                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+            >
+                Click me
+            </button>
+        </div>
     )
 }
 
