@@ -2,12 +2,19 @@ package passwordManagement
 
 import (
 	"net/http"
+	"os"
+	"github.com/joho/godotenv"
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	"github.com/patrickhcnguyen/PassManager/backend/database"
 	"github.com/patrickhcnguyen/PassManager/backend/models"
-	"golang.org/x/crypto/bcrypt"
+	"crypto/aes"
+	"encoding/base64"
+	"bytes"
+	"crypto/cipher"
+	"log"
+	"fmt"
 )
 
 func CreateNewPassword(c *gin.Context) {
@@ -39,16 +46,65 @@ func CreateNewPassword(c *gin.Context) {
 		SiteName:          input.WebsiteName,
 		EncryptedPassword: input.Password,
 	}
-	// hash password
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(input.Password), bcrypt.DefaultCost)
+	// encrypt password
+	encryptedPassword, err := EncryptPassword(input.Password)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "failed to hash password"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "failed to encrypt password"})
 		return
 	}
-	password.EncryptedPassword = string(hashedPassword)
+	password.EncryptedPassword = encryptedPassword
 
 	database.DB.Create(&password)
 
 	c.JSON(http.StatusOK, gin.H{"message": "password created successfully"})
+}
 
+func EncryptPassword(password string) (string, error) {
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+
+	key := []byte(os.Getenv("key"))
+	iv := []byte(os.Getenv("iv"))
+
+	// Ensure IV is exactly 16 bytes
+	if len(iv) != aes.BlockSize {
+		return "", fmt.Errorf("IV must be exactly %d bytes", aes.BlockSize)
+	}
+
+	// Ensure key is 16, 24, or 32 bytes (for AES-128, AES-192, or AES-256)
+	if len(key) != 16 && len(key) != 24 && len(key) != 32 {
+		return "", fmt.Errorf("key must be 16, 24, or 32 bytes")
+	}
+
+	// init cipher using key
+	var plainTextBlock []byte
+	length := len(password)
+
+	if length % 16 != 0 {
+		extendBlock := 16 - (length % 16)
+		plainTextBlock = make([]byte, length+extendBlock)
+		copy(plainTextBlock[length:], bytes.Repeat([]byte{uint8(extendBlock)}, extendBlock))
+	} else {
+		plainTextBlock = make([]byte, length)
+	}
+
+	copy(plainTextBlock, password)
+	block, err := aes.NewCipher(key)
+	if err != nil {
+		return "", err
+	}
+	
+	// Create ciphertext buffer with same length as plaintext
+    ciphertext := make([]byte, len(plainTextBlock))
+
+	// create a byte array of the plain text's length and start encrypting
+	mode := cipher.NewCBCEncrypter(block, iv)
+	mode.CryptBlocks(ciphertext, plainTextBlock)
+
+	// convert to base64
+	str := base64.StdEncoding.EncodeToString(ciphertext)
+
+	return str, nil	
 }
