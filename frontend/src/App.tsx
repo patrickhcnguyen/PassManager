@@ -9,7 +9,7 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <Router>
-        <div className="w-[350px] h-[500px] overflow-auto">
+        <div className="overflow-auto">
           <Routes>
             <Route path="/" element={<Login />} />
             <Route path="/register" element={<Register />} />
