@@ -1,8 +1,10 @@
 import React from 'react';
 import { useRegisterUser } from '../../Hooks/fetchUser/fetchUser';
+import { useNavigate } from 'react-router-dom';
 
 const Register = () => {
     const registerMutation = useRegisterUser();
+    const navigate = useNavigate();
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -18,7 +20,8 @@ const Register = () => {
             });
             alert('Successfully registered');
             form.reset();
-            } catch (error) {
+            navigate('/dashboard');
+        } catch (error) {
             console.error('Registration failed:', error);
         }
     };
