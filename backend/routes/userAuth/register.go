@@ -1,4 +1,5 @@
 // register username, email, and password
+// bcrypt for hashing master password
 
 package userAuth
 
